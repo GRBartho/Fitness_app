@@ -41,7 +41,17 @@ A muscle's rank is the weighted average of the lifts that mainly train it. Fitne
 
 Dumbbell lifts (incline press, shoulder press, lateral raise, curls) use the weight of **one** dumbbell. All thresholds are in `data.js` if you want to tweak them.
 
-## Install on your phone
+## Android app (APK)
+
+`dist/LevelUp.apk` is a ready-to-install Android app (Android 7+). It wraps the same web app in a full-screen WebView, with native backup save/import, back-button support and screen-on during the interval timer.
+
+1. Download `LevelUp.apk` to your phone.
+2. Tap it. If Android asks, allow your browser or Files app to **install unknown apps**.
+3. Tap **Install**. If Play Protect warns about an unrecognized app, tap **More details → Install anyway**.
+
+Rebuild after changing the web app with `android/build.sh` (no Android SDK needed: it fetches aapt2, dx and a signer itself). Bump `VERSION_CODE` for updates, e.g. `VERSION_CODE=2 VERSION_NAME=1.1 android/build.sh`. Updates must be signed with the same key (`android/levelup.*.pem`) or Android will refuse to install them over the old version.
+
+## Install on your phone (web version)
 
 The app has to be served over HTTPS once. After that it works offline.
 

@@ -741,6 +741,7 @@ async function startInterval() {
   });
   let wake = null;
   try { wake = await navigator.wakeLock?.request('screen'); } catch (e) { /* noop */ }
+  try { window.AndroidBridge?.keepScreenOn(true); } catch (e) { /* noop */ }
   iv = { phases, idx: 0, end: Date.now() + phases[0].sec * 1000, paused: false, left: 0, wake, rounds: c.rounds };
   beep(); $('#timer').hidden = false;
   iv.handle = setInterval(ivTick, 200); ivTick();
@@ -771,7 +772,21 @@ function ivNext() {
   beep(ph.kind === 'work' ? 990 : 440, 0.35); vibrate(ph.kind === 'work' ? [200] : [80, 60, 80]);
   iv.end = Date.now() + ph.sec * 1000;
 }
-function stopInterval() { if (!iv) return; clearInterval(iv.handle); try { iv.wake?.release(); } catch (e) { /* noop */ } iv = null; $('#timer').hidden = true; }
+function stopInterval() {
+  if (!iv) return;
+  clearInterval(iv.handle);
+  try { iv.wake?.release(); } catch (e) { /* noop */ }
+  try { window.AndroidBridge?.keepScreenOn(false); } catch (e) { /* noop */ }
+  iv = null; $('#timer').hidden = true;
+}
+
+// Android back button: close overlays, then return to Home, then exit.
+window.__back = () => {
+  if (iv) { stopInterval(); return true; }
+  if (!$('#modal').hidden) { $('#modal').hidden = true; tab = 'home'; render(); return true; }
+  if (state.profile && tab !== 'home') { tab = 'home'; render(); window.scrollTo(0, 0); return true; }
+  return false;
+};
 
 // ---------- Events ----------
 document.addEventListener('click', (ev) => {
@@ -837,6 +852,7 @@ document.addEventListener('click', (ev) => {
     case 'del-weight': state.weights = state.weights.filter((w) => w.date !== el.dataset.d); save(); render(); break;
     case 'stop-rest': stopRestTimer(); break;
     case 'export': {
+      if (window.AndroidBridge) { AndroidBridge.saveFile(`levelup-backup-${todayStr()}.json`, JSON.stringify(state, null, 2)); break; }
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob); a.download = `levelup-backup-${todayStr()}.json`; a.click();
@@ -885,6 +901,6 @@ document.addEventListener('change', (ev) => {
 
 // ---------- Boot ----------
 render();
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+if ('serviceWorker' in navigator && location.protocol !== 'file:' && !window.AndroidBridge) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
