@@ -29,7 +29,8 @@ const EXERCISES = {
   bss:          { name: 'Bulgarian Split Squat',   type: 'weight', region: 'lower', std: [0.10, 0.20, 0.33, 0.50, 0.70], muscles: { quads: 1, glutes: 0.7 }, inc: 5, note: 'weight of ONE dumbbell, reps per leg (0 = bodyweight)' },
   hammer_curl:  { name: 'Hammer Curl',             type: 'weight', region: 'upper', std: [0.10, 0.20, 0.32, 0.45, 0.60], muscles: { biceps: 1 }, inc: 2.5, note: 'weight of ONE dumbbell' },
   knee_raise:   { name: 'Hanging Knee Raises',     type: 'reps',   region: 'core',  std: [5, 10, 15, 22, 30],            muscles: { core: 1 } },
-  calf_raise:   { name: 'Calf Raises',             type: 'weight', region: 'lower', std: [0.50, 1.00, 1.50, 2.25, 3.00], muscles: { calves: 1 }, inc: 10 },
+  calf_raise:   { name: 'Standing Calf Raise',     type: 'weight', region: 'lower', std: [0.50, 1.00, 1.50, 2.25, 3.00], muscles: { calves: 1 }, inc: 10 },
+  seated_calf:  { name: 'Seated Calf Raise',       type: 'weight', region: 'lower', std: [0.25, 0.50, 0.90, 1.40, 2.00], muscles: { calves: 1 }, inc: 10 },
   abs:          { name: 'Abs (reps per set)',      type: 'reps',   region: 'core',  std: [8, 15, 25, 35, 50],            muscles: { core: 1 } },
 };
 
@@ -62,6 +63,7 @@ const PLAN = {
   1: { title: 'Full Body A · Strength', emoji: '🏋️', type: 'lift', items: [
     ['bench', 3, 6, 8], ['hack_squat', 3, 8, 10], ['lat_pulldown', 3, 8, 10], ['leg_curl', 3, 10, 15],
     ['lateral_raise', 3, 12, 15], ['biceps_curl', 3, 10, 12], ['tri_pushdown', 3, 10, 12],
+    ['calf_raise', 3, 12, 15],
   ] },
   2: { title: 'Rest Day', emoji: '😴', type: 'rest' },
   3: { title: 'Full Body B · Hypertrophy', emoji: '🏋️', type: 'lift', items: [
@@ -72,6 +74,7 @@ const PLAN = {
   5: { title: 'Full Body C · Muscle + Athletic', emoji: '🏋️', type: 'lift', items: [
     ['bench', 3, 6, 8], ['bss', 3, 8, 10], ['cs_row', 3, 8, 10], ['leg_curl', 3, 10, 15],
     ['lat_pulldown', 3, 8, 10], ['lateral_raise', 3, 12, 15], ['knee_raise', 3, 10, 15],
+    ['seated_calf', 3, 15, 20],
   ] },
   6: { title: 'Rest Day', emoji: '😴', type: 'rest' },
   0: { title: 'Rest Day', emoji: '😴', type: 'rest' },
