@@ -6,18 +6,17 @@ It's an installable web app (PWA): no app store, it works offline, and your data
 
 ## Features
 
-- **Your program built in.** Mon/Wed/Fri Full Body A/B/C and Tue/Thu Fitness Court, with your sets and rep ranges.
+- **Your program built in.** Mon/Wed/Fri Full Body A/B/C (strength, hypertrophy, muscle + athletic) with your sets and rep ranges.
 - **Set logging.** Enter weight × reps for each set. The app fills in last session's weight and tells you when to add weight: once you hit the top of the rep range on every set, it suggests ⬆️ +5 lb.
 - **Rest timer.** Checking off a set starts it (90 s by default, change it in Settings).
-- **Fitness Court interval timer.** 45 s work / 15 s rest for 1–3 rounds, with beeps and vibration. Your screen stays on. Swap in variations for Thursday.
 - **XP and levels:**
-  - 10 XP per set, 8 XP per court station, 25 per full round, and 50 for finishing a workout
+  - 10 XP per set and 50 for finishing a workout
   - 75 XP per personal record (estimated 1RM)
   - 150 XP per muscle rank-up
   - Bodyweight XP: about 27 XP per lb every time you reach a new low (or a new high if you're bulking)
   - Achievements (Perfect Week, Bodyweight Bench, S-Rank Hunter …)
   - Titles: Novice → Iron Initiate → Bronze Lifter → … → Mythic Hunter
-- **Muscle ranks, F → S++.** Chest, Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves, Core and Conditioning.
+- **Muscle ranks, F → S++.** Chest, Back, Shoulders, Biceps, Triceps, Quads, Hamstrings, Glutes, Calves and Core.
 - **Bodyweight tracking** with a trend chart and goal progress.
 - **History**, plus JSON **export/import backup**.
 
@@ -37,7 +36,7 @@ For each lift, the app estimates your 1-rep max from your best set (Epley formul
 | S+ | Elite |
 | S++ | 1.2× elite (world class) |
 
-A muscle's rank is the weighted average of the lifts that mainly train it. Fitness Court stations are ranked by reps in 45 s and feed **Core** and **Conditioning**. Because ranks are relative to bodyweight, losing fat also raises your ranks.
+A muscle's rank is the weighted average of the lifts that mainly train it. Rep-based exercises (hanging knee raises) are ranked by reps per set. Because ranks are relative to bodyweight, losing fat also raises your ranks.
 
 Dumbbell lifts (incline press, shoulder press, lateral raise, curls) use the weight of **one** dumbbell. All thresholds are in `data.js` if you want to tweak them.
 

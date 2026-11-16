@@ -44,10 +44,9 @@ const MUSCLES = {
   glutes:       { name: 'Glutes',       icon: '🍑' },
   calves:       { name: 'Calves',       icon: '🐐' },
   core:         { name: 'Core',         icon: '🧱' },
-  conditioning: { name: 'Conditioning', icon: '🔥' },
 };
 
-// Fitness Court stations. std = reps in one 45s interval (Beginner..Elite).
+// Fitness Court stations (no longer in the plan; kept so older logged sessions still display).
 const COURT_STATIONS = [
   { cat: 'Core',    name: 'Mountain Climbers',     std: [30, 45, 60, 75, 90],  muscles: { core: 1, conditioning: 1 }, alts: ['Plank Shoulder Taps', 'Bicycle Crunches', 'V-Ups'] },
   { cat: 'Squat',   name: 'Step-Ups',              std: [12, 18, 24, 30, 36],  muscles: { conditioning: 1 }, alts: ['Jump Squats', 'Bodyweight Squats', 'Box Jumps'] },
@@ -64,12 +63,12 @@ const PLAN = {
     ['bench', 3, 6, 8], ['hack_squat', 3, 8, 10], ['lat_pulldown', 3, 8, 10], ['leg_curl', 3, 10, 15],
     ['lateral_raise', 3, 12, 15], ['biceps_curl', 3, 10, 12], ['tri_pushdown', 3, 10, 12],
   ] },
-  2: { title: 'Fitness Court', emoji: '🌳', type: 'court' },
+  2: { title: 'Rest Day', emoji: '😴', type: 'rest' },
   3: { title: 'Full Body B · Hypertrophy', emoji: '🏋️', type: 'lift', items: [
     ['squat', 3, 6, 8], ['incline_db', 3, 8, 10], ['cable_row', 3, 8, 10], ['hip_thrust', 3, 8, 12],
     ['shoulder_press', 3, 8, 10], ['hammer_curl', 2, 10, 12], ['tri_ext', 2, 10, 12],
   ] },
-  4: { title: 'Fitness Court (variations)', emoji: '🌳', type: 'court', variations: true },
+  4: { title: 'Rest Day', emoji: '😴', type: 'rest' },
   5: { title: 'Full Body C · Muscle + Athletic', emoji: '🏋️', type: 'lift', items: [
     ['bench', 3, 6, 8], ['bss', 3, 8, 10], ['cs_row', 3, 8, 10], ['leg_curl', 3, 10, 15],
     ['lat_pulldown', 3, 8, 10], ['lateral_raise', 3, 12, 15], ['knee_raise', 3, 10, 15],
@@ -92,8 +91,7 @@ const ACHIEVEMENTS = {
   workouts_50:   { name: 'Iron Discipline',     desc: 'Log 50 workouts',                  xp: 1000, icon: '⚙️' },
   workouts_100:  { name: 'Centurion',           desc: 'Log 100 workouts',                 xp: 2500, icon: '🏛️' },
   first_pr:      { name: 'Personal Record',     desc: 'Set your first PR',                xp: 100, icon: '📈' },
-  full_week:     { name: 'Perfect Week',        desc: 'Complete all 5 planned days in one week', xp: 400, icon: '⭐' },
-  court_3:       { name: 'Court Conqueror',     desc: 'Finish 3 Fitness Court rounds',    xp: 300, icon: '🌳' },
+  full_week:     { name: 'Perfect Week',        desc: 'Complete all 3 lifting days in one week', xp: 400, icon: '⭐' },
   rank_c:        { name: 'Rising',              desc: 'Reach C rank in any muscle',       xp: 200, icon: '🥉' },
   rank_a:        { name: 'Elite Class',         desc: 'Reach A rank in any muscle',       xp: 500, icon: '🥈' },
   rank_s:        { name: 'S-Rank Hunter',       desc: 'Reach S rank in any muscle',       xp: 1500, icon: '👑' },

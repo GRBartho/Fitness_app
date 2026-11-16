@@ -118,13 +118,6 @@ function muscleScores(sessions = state.sessions) {
     if (!st) continue;
     for (const [m, w] of Object.entries(EXERCISES[id].muscles)) if (w >= 0.5) add(m, w, st.score, { kind: 'ex', id, ...st });
   }
-  for (const c of COURT_STATIONS) {
-    const best = courtBest(c.cat, sessions);
-    if (!best) continue;
-    const t = thresholds(c.std, 'core');
-    const score = scoreFor(best, t);
-    for (const [m, w] of Object.entries(c.muscles)) add(m, w, score, { kind: 'court', cat: c.cat, name: c.name, best, v: best, t, score });
-  }
   const out = {};
   for (const [m, a] of Object.entries(acc)) out[m] = { score: a.sum / a.w, src: a.src };
   return out;
@@ -172,8 +165,7 @@ function checkAchievements(events) {
   if (n >= 50) unlock('workouts_50');
   if (n >= 100) unlock('workouts_100');
   if (state.xpLog.some((x) => x.reason.startsWith('PR'))) unlock('first_pr');
-  if (state.sessions.some((s) => { const w = sessionsThisWeek(parseDate(s.date)); return new Set(w.map((x) => x.day)).size >= 5; })) unlock('full_week');
-  if (state.sessions.some((s) => s.court && s.court.rounds >= 3)) unlock('court_3');
+  if (state.sessions.some((s) => { const w = sessionsThisWeek(parseDate(s.date)); return [1, 3, 5].every((d) => w.some((x) => x.day === d)); })) unlock('full_week');
   const ms = muscleScores();
   const maxG = Math.max(-1, ...Object.values(ms).map((m) => gradeIdx(m.score)));
   if (maxG >= 3) unlock('rank_c');
@@ -387,7 +379,7 @@ function viewHome() {
   </section>
 
   <section class="stats">
-    <div class="stat"><div class="stat-v">${wk.length}/5</div><div class="stat-l">This week</div></div>
+    <div class="stat"><div class="stat-v">${wk.length}/3</div><div class="stat-l">This week</div></div>
     <div class="stat"><div class="stat-v">${weekStreak()}🔥</div><div class="stat-l">Week streak</div></div>
     <div class="stat"><div class="stat-v">${state.sessions.length}</div><div class="stat-l">Workouts</div></div>
     <div class="stat"><div class="stat-v">${bw == null ? '–' : (bwDelta > 0 ? '+' : '') + (+toDisp(bwDelta).toFixed(1))}</div><div class="stat-l">${unit()} change</div></div>
@@ -401,7 +393,7 @@ function viewHome() {
   </section>
 
   <section class="card">
-    <div class="h3">Achievements <span class="muted small">${Object.keys(state.achievements).length}/${Object.keys(ACHIEVEMENTS).length}</span></div>
+    <div class="h3">Achievements <span class="muted small">${Object.keys(state.achievements).filter((id) => ACHIEVEMENTS[id]).length}/${Object.keys(ACHIEVEMENTS).length}</span></div>
     <div class="ach-grid">
       ${Object.entries(ACHIEVEMENTS).map(([id, a]) => `<div class="ach ${state.achievements[id] ? 'got' : ''}" title="${esc(a.desc)}"><div class="ach-i">${a.icon}</div><div class="ach-n">${a.name}</div><div class="ach-d">${a.desc} · ${a.xp} XP</div></div>`).join('')}
     </div>
@@ -615,7 +607,7 @@ function viewHistory() {
       }
       return `<section class="card">
         <button class="muscle-head" data-act="session" data-id="${s.id}">
-          <div class="muscle-mid"><div class="h3">${PLAN[s.day]?.emoji || '🏋️'} ${esc(s.title)}</div><div class="muted small">${fmtDate(s.date)}</div></div>
+          <div class="muscle-mid"><div class="h3">${s.type === 'court' ? '🌳' : '🏋️'} ${esc(s.title)}</div><div class="muted small">${fmtDate(s.date)}</div></div>
           <span class="xp-plus">+${s.xp || 0} XP</span><span class="chev">${open ? '▾' : '▸'}</span>
         </button>${open ? `<div class="muscle-body">${body}</div>` : ''}</section>`;
     }).join('');
