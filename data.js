@@ -10,20 +10,25 @@ const FEMALE_FACTOR = { upper: 0.6, lower: 0.72, core: 0.85 };
 
 // type: 'weight' (score = estimated 1RM / bodyweight) or 'reps' (score = best reps in a set)
 const EXERCISES = {
-  bench:        { name: 'Bench Press',             type: 'weight', region: 'upper', std: [0.50, 0.75, 1.15, 1.50, 1.90], muscles: { chest: 1, triceps: 0.5, shoulders: 0.4 }, inc: 5 },
+  bench:        { name: 'Barbell Bench Press',             type: 'weight', region: 'upper', std: [0.50, 0.75, 1.15, 1.50, 1.90], muscles: { chest: 1, triceps: 0.5, shoulders: 0.4 }, inc: 5 },
   incline_db:   { name: 'Incline Dumbbell Press',  type: 'weight', region: 'upper', std: [0.15, 0.25, 0.40, 0.55, 0.70], muscles: { chest: 1, shoulders: 0.6, triceps: 0.4 }, inc: 5, note: 'weight of ONE dumbbell' },
   leg_press:    { name: 'Leg Press',               type: 'weight', region: 'lower', std: [1.00, 1.75, 2.50, 3.50, 4.50], muscles: { quads: 1, glutes: 0.6 }, inc: 10 },
-  squat:        { name: 'Squat',                   type: 'weight', region: 'lower', std: [0.75, 1.10, 1.50, 2.00, 2.50], muscles: { quads: 1, glutes: 0.8, core: 0.3 }, inc: 5 },
+  squat:        { name: 'Barbell Squat',                   type: 'weight', region: 'lower', std: [0.75, 1.10, 1.50, 2.00, 2.50], muscles: { quads: 1, glutes: 0.8, core: 0.3 }, inc: 5 },
   rdl:          { name: 'Romanian Deadlift',       type: 'weight', region: 'lower', std: [0.75, 1.10, 1.50, 2.00, 2.50], muscles: { hamstrings: 1, glutes: 0.8, back: 0.4 }, inc: 5 },
-  leg_curl:     { name: 'Leg Curl',                type: 'weight', region: 'lower', std: [0.35, 0.50, 0.75, 1.00, 1.30], muscles: { hamstrings: 1 }, inc: 5 },
+  leg_curl:     { name: 'Seated / Lying Leg Curl',                type: 'weight', region: 'lower', std: [0.35, 0.50, 0.75, 1.00, 1.30], muscles: { hamstrings: 1 }, inc: 5 },
   lat_pulldown: { name: 'Lat Pulldown',            type: 'weight', region: 'upper', std: [0.50, 0.70, 1.00, 1.25, 1.50], muscles: { back: 1, biceps: 0.5 }, inc: 5 },
   cable_row:    { name: 'Seated Cable Row',        type: 'weight', region: 'upper', std: [0.50, 0.75, 1.00, 1.40, 1.75], muscles: { back: 1, biceps: 0.5 }, inc: 5 },
   cs_row:       { name: 'Chest-Supported Row',     type: 'weight', region: 'upper', std: [0.40, 0.60, 0.85, 1.15, 1.50], muscles: { back: 1, biceps: 0.4, shoulders: 0.3 }, inc: 5 },
-  shoulder_press:{ name: 'Shoulder Press',         type: 'weight', region: 'upper', std: [0.15, 0.25, 0.40, 0.55, 0.75], muscles: { shoulders: 1, triceps: 0.5 }, inc: 5, note: 'weight of ONE dumbbell' },
-  lateral_raise:{ name: 'Lateral Raise',           type: 'weight', region: 'upper', std: [0.05, 0.10, 0.18, 0.27, 0.37], muscles: { shoulders: 1 }, inc: 2.5, note: 'weight of ONE dumbbell' },
+  shoulder_press:{ name: 'Seated Dumbbell Shoulder Press',         type: 'weight', region: 'upper', std: [0.15, 0.25, 0.40, 0.55, 0.75], muscles: { shoulders: 1, triceps: 0.5 }, inc: 5, note: 'weight of ONE dumbbell' },
+  lateral_raise:{ name: 'Dumbbell Lateral Raise',           type: 'weight', region: 'upper', std: [0.05, 0.10, 0.18, 0.27, 0.37], muscles: { shoulders: 1 }, inc: 2.5, note: 'weight of ONE dumbbell' },
   biceps_curl:  { name: 'Biceps Curl',             type: 'weight', region: 'upper', std: [0.10, 0.18, 0.30, 0.42, 0.55], muscles: { biceps: 1 }, inc: 2.5, note: 'weight of ONE dumbbell' },
   tri_pushdown: { name: 'Triceps Pushdown',        type: 'weight', region: 'upper', std: [0.25, 0.40, 0.60, 0.85, 1.10], muscles: { triceps: 1 }, inc: 5 },
-  tri_ext:      { name: 'Triceps Extension',       type: 'weight', region: 'upper', std: [0.20, 0.35, 0.50, 0.75, 1.00], muscles: { triceps: 1 }, inc: 5 },
+  tri_ext:      { name: 'Overhead Triceps Extension',       type: 'weight', region: 'upper', std: [0.20, 0.35, 0.50, 0.75, 1.00], muscles: { triceps: 1 }, inc: 5 },
+  hack_squat:   { name: 'Hack Squat',              type: 'weight', region: 'lower', std: [0.75, 1.15, 1.65, 2.30, 3.00], muscles: { quads: 1, glutes: 0.5 }, inc: 10, note: 'plates loaded (not counting the sled)' },
+  hip_thrust:   { name: 'Hip Thrust / Glute Drive', type: 'weight', region: 'lower', std: [0.50, 1.00, 1.60, 2.40, 3.20], muscles: { glutes: 1, hamstrings: 0.4 }, inc: 10 },
+  bss:          { name: 'Bulgarian Split Squat',   type: 'weight', region: 'lower', std: [0.10, 0.20, 0.33, 0.50, 0.70], muscles: { quads: 1, glutes: 0.7 }, inc: 5, note: 'weight of ONE dumbbell, reps per leg (0 = bodyweight)' },
+  hammer_curl:  { name: 'Hammer Curl',             type: 'weight', region: 'upper', std: [0.10, 0.20, 0.32, 0.45, 0.60], muscles: { biceps: 1 }, inc: 2.5, note: 'weight of ONE dumbbell' },
+  knee_raise:   { name: 'Hanging Knee Raises',     type: 'reps',   region: 'core',  std: [5, 10, 15, 22, 30],            muscles: { core: 1 } },
   calf_raise:   { name: 'Calf Raises',             type: 'weight', region: 'lower', std: [0.50, 1.00, 1.50, 2.25, 3.00], muscles: { calves: 1 }, inc: 10 },
   abs:          { name: 'Abs (reps per set)',      type: 'reps',   region: 'core',  std: [8, 15, 25, 35, 50],            muscles: { core: 1 } },
 };
@@ -55,19 +60,19 @@ const COURT_STATIONS = [
 
 // Plan keyed by JS weekday (0 = Sunday). Items: [exerciseId | [alt ids], sets, repLow, repHigh]
 const PLAN = {
-  1: { title: 'Full Body A', emoji: '🏋️', type: 'lift', items: [
-    ['bench', 3, 6, 8], ['leg_press', 3, 8, 10], ['lat_pulldown', 3, 8, 10], ['rdl', 3, 8, 10],
+  1: { title: 'Full Body A · Strength', emoji: '🏋️', type: 'lift', items: [
+    ['bench', 3, 6, 8], ['hack_squat', 3, 8, 10], ['lat_pulldown', 3, 8, 10], ['leg_curl', 3, 10, 15],
     ['lateral_raise', 3, 12, 15], ['biceps_curl', 3, 10, 12], ['tri_pushdown', 3, 10, 12],
   ] },
   2: { title: 'Fitness Court', emoji: '🌳', type: 'court' },
-  3: { title: 'Full Body B', emoji: '🏋️', type: 'lift', items: [
-    ['squat', 3, 6, 8], ['incline_db', 3, 8, 10], ['cable_row', 3, 8, 10], ['leg_curl', 3, 10, 12],
-    ['shoulder_press', 3, 8, 10], ['biceps_curl', 2, 10, 12], ['tri_ext', 2, 10, 12],
+  3: { title: 'Full Body B · Hypertrophy', emoji: '🏋️', type: 'lift', items: [
+    ['squat', 3, 6, 8], ['incline_db', 3, 8, 10], ['cable_row', 3, 8, 10], ['hip_thrust', 3, 8, 12],
+    ['shoulder_press', 3, 8, 10], ['hammer_curl', 2, 10, 12], ['tri_ext', 2, 10, 12],
   ] },
   4: { title: 'Fitness Court (variations)', emoji: '🌳', type: 'court', variations: true },
-  5: { title: 'Full Body C', emoji: '🏋️', type: 'lift', items: [
-    ['bench', 3, 6, 8], ['leg_press', 3, 8, 12], ['cs_row', 3, 8, 10], ['rdl', 3, 8, 10],
-    ['lat_pulldown', 3, 8, 10], ['lateral_raise', 3, 12, 15], [['calf_raise', 'abs'], 3, 10, 15],
+  5: { title: 'Full Body C · Muscle + Athletic', emoji: '🏋️', type: 'lift', items: [
+    ['bench', 3, 6, 8], ['bss', 3, 8, 10], ['cs_row', 3, 8, 10], ['leg_curl', 3, 10, 15],
+    ['lat_pulldown', 3, 8, 10], ['lateral_raise', 3, 12, 15], ['knee_raise', 3, 10, 15],
   ] },
   6: { title: 'Rest Day', emoji: '😴', type: 'rest' },
   0: { title: 'Rest Day', emoji: '😴', type: 'rest' },

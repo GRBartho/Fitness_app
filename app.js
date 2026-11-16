@@ -247,13 +247,13 @@ function finishWorkout() {
   if (d.type === 'lift') {
     for (const e of d.exercises) {
       const ex = EXERCISES[e.id];
-      const sets = e.sets.filter((s) => num(s.r) > 0 && (ex.type === 'reps' || num(s.w) > 0))
-        .map((s) => ({ w: ex.type === 'reps' ? fromDisp(num(s.w)) : fromDisp(num(s.w)), r: Math.round(num(s.r)) }));
+      const sets = e.sets.filter((s) => num(s.r) > 0)
+        .map((s) => ({ w: fromDisp(num(s.w)), r: Math.round(num(s.r)) }));
       if (!sets.length) continue;
       session.exercises.push({ id: e.id, sets });
       setCount += sets.length;
     }
-    if (!setCount) { toast('Log at least one set (weight + reps) first'); return; }
+    if (!setCount) { toast('Log at least one set (reps) first'); return; }
     xpItems.push([setCount * 10, `${setCount} sets completed`]);
   } else {
     const rounds = d.court.rounds;

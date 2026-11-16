@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION when files change so phones pick up the update.
-const VERSION = 'levelup-v1';
+const VERSION = 'levelup-v2';
 const FILES = ['./', 'index.html', 'styles.css', 'data.js', 'app.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 

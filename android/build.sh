@@ -19,7 +19,7 @@ fi
   https://repo1.maven.org/maven2/org/robolectric/android-all/14-robolectric-10818077/android-all-14-robolectric-10818077.jar
 [ -f "$T/dx.jar" ] || curl -sL -o "$T/dx.jar" \
   https://repo1.maven.org/maven2/com/jakewharton/android/repackaged/dalvik-dx/16.0.1/dalvik-dx-16.0.1.jar
-[ -d "$T/node_modules/apk_sign_ts" ] || (cd "$T" && npm init -y >/dev/null && npm i --silent apk_sign_ts@1.0.1)
+[ -d "$T/node_modules/apk_sign_ts" ] || (cd "$T" && echo '{"private":true}' > package.json && npm i --silent apk_sign_ts@1.0.1)
 
 rm -rf "$B" && mkdir -p "$B/res" "$B/assets/www" "$B/gen" "$B/classes"
 
