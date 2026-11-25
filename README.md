@@ -6,7 +6,7 @@ It's an installable web app (PWA): no app store, it works offline, and your data
 
 ## Features
 
-- **Your program built in.** Mon/Wed/Fri Full Body A/B/C (strength, hypertrophy, muscle + athletic) with your sets and rep ranges.
+- **Your program built in.** A 5-day PPL + Upper/Lower split (Push, Pull, Legs-Quads, Upper, Legs-Posterior chain) planned around Muay Thai on Tuesday and Thursday, with your sets and rep ranges.
 - **Set logging.** Enter weight × reps for each set. The app fills in last session's weight and tells you when to add weight: once you hit the top of the rep range on every set, it suggests ⬆️ +5 lb.
 - **Rest timer.** Checking off a set starts it (90 s by default, change it in Settings).
 - **XP and levels:**

@@ -52,6 +52,8 @@ function bodyweightKg() {
 }
 
 // ---------- Scoring ----------
+// Load actually lifted; assisted exercises subtract the assistance from bodyweight.
+function loadOf(ex, w) { return ex.assist ? Math.max(0, bodyweightKg() - w) : w; }
 function e1rm(w, r) { if (!w || !r) return 0; r = Math.min(r, 15); return r <= 1 ? w : w * (1 + r / 30); }
 
 function thresholds(std, region) {
@@ -88,7 +90,7 @@ function bestFor(exId, sessions = state.sessions) {
   for (const s of sessions) for (const e of s.exercises || []) {
     if (e.id !== exId) continue;
     for (const st of e.sets) {
-      const v = ex.type === 'reps' ? st.r : e1rm(st.w, st.r);
+      const v = ex.type === 'reps' ? st.r : e1rm(loadOf(ex, st.w), st.r);
       if (v > best) best = v;
     }
   }
@@ -128,6 +130,7 @@ function overallScore(ms = muscleScores()) {
 }
 
 // ---------- Leveling ----------
+const LIFT_DAYS = Object.keys(PLAN).map(Number).filter((d) => PLAN[d].type === 'lift');
 const totalXP = () => state.xpLog.reduce((a, x) => a + x.amount, 0);
 const xpNeed = (L) => Math.round(100 * Math.pow(L, 1.25));
 function levelInfo(xp = totalXP()) {
@@ -165,13 +168,13 @@ function checkAchievements(events) {
   if (n >= 50) unlock('workouts_50');
   if (n >= 100) unlock('workouts_100');
   if (state.xpLog.some((x) => x.reason.startsWith('PR'))) unlock('first_pr');
-  if (state.sessions.some((s) => { const w = sessionsThisWeek(parseDate(s.date)); return [1, 3, 5].every((d) => w.some((x) => x.day === d)); })) unlock('full_week');
+  if (state.sessions.some((s) => { const w = sessionsThisWeek(parseDate(s.date)); return LIFT_DAYS.every((d) => w.some((x) => x.day === d)); })) unlock('full_week');
   const ms = muscleScores();
   const maxG = Math.max(-1, ...Object.values(ms).map((m) => gradeIdx(m.score)));
   if (maxG >= 3) unlock('rank_c');
   if (maxG >= 5) unlock('rank_a');
   if (maxG >= 6) unlock('rank_s');
-  if (bestFor('bench') >= bodyweightKg()) unlock('bw_bench');
+  if (Math.max(bestFor('bench'), bestFor('seated_chest_press')) >= bodyweightKg()) unlock('bw_bench');
   const p = state.profile;
   if (p && state.weights.length) {
     const moved = p.goal === 'gain' ? bodyweightKg() - p.startKg : p.startKg - bodyweightKg();
@@ -198,11 +201,12 @@ function suggestion(exId, lo, hi) {
   if (!last) return { w: '', text: 'First time — pick a weight you can do for ' + (ex.type === 'reps' ? 'max reps' : `${hi} clean reps`) + '.' };
   const sets = last.e.sets;
   if (ex.type === 'reps') return { w: '', text: `Last: ${sets.map((s) => s.r).join(', ')} reps. Beat it!` };
-  const topW = Math.max(...sets.map((s) => s.w));
+  const topW = ex.assist ? Math.min(...sets.map((s) => s.w)) : Math.max(...sets.map((s) => s.w));
   const allHit = sets.every((s) => s.r >= hi);
   const lastTxt = `Last: ${sets.map((s) => `${+toDisp(s.w).toFixed(1)}×${s.r}`).join(', ')}`;
   if (allHit) {
     const incKg = unit() === 'lb' ? ex.inc * KG_PER_LB : ex.inc / 2;
+    if (ex.assist) return { w: +toDisp(Math.max(0, topW - incKg)).toFixed(1), text: `${lastTxt} — you hit ${hi} on every set. ⬇️ Use ${unit() === 'lb' ? ex.inc : ex.inc / 2} ${unit()} less assistance!` };
     return { w: +toDisp(topW + incKg).toFixed(1), text: `${lastTxt} — you hit ${hi} on every set. ⬆️ Add ${unit() === 'lb' ? ex.inc : ex.inc / 2} ${unit()}!` };
   }
   return { w: +toDisp(topW).toFixed(1), text: `${lastTxt} — same weight, aim for ${hi} reps.` };
@@ -375,11 +379,12 @@ function viewHome() {
       <div><div class="muted small">TODAY'S QUEST</div><div class="h2">${todayPlan.emoji} ${todayPlan.title}</div></div>
       ${todayPlan.type !== 'rest' ? `<button class="btn primary" data-act="start-today">${state.draft ? 'Continue' : 'Start'}</button>` : ''}
     </div>
+    ${todayPlan.note ? `<p class="hint">${todayPlan.note}</p>` : ''}
     ${todayPlan.type === 'rest' ? '<p class="muted">Recover, stretch, walk, hydrate. Log your bodyweight in the Body tab!</p>' : ''}
   </section>
 
   <section class="stats">
-    <div class="stat"><div class="stat-v">${wk.length}/3</div><div class="stat-l">This week</div></div>
+    <div class="stat"><div class="stat-v">${wk.length}/${LIFT_DAYS.length}</div><div class="stat-l">This week</div></div>
     <div class="stat"><div class="stat-v">${weekStreak()}🔥</div><div class="stat-l">Week streak</div></div>
     <div class="stat"><div class="stat-v">${state.sessions.length}</div><div class="stat-l">Workouts</div></div>
     <div class="stat"><div class="stat-v">${bw == null ? '–' : (bwDelta > 0 ? '+' : '') + (+toDisp(bwDelta).toFixed(1))}</div><div class="stat-l">${unit()} change</div></div>
@@ -416,12 +421,14 @@ function viewTrain() {
         <button class="card day-card ${day === today ? 'today' : ''}" data-act="${p.type === 'rest' ? '' : 'start-day'}" data-day="${day}" ${p.type === 'rest' ? 'disabled' : ''}>
           <div class="day-name">${names[day]}</div>
           <div class="day-title">${p.emoji} ${p.title}</div>
-          <div class="muted small">${p.type === 'lift' ? p.items.map((i) => Array.isArray(i[0]) ? i[0].map((x) => EXERCISES[x].name).join(' / ') : EXERCISES[i[0]].name).join(' · ') : p.type === 'court' ? '7 stations · 45s work / 15s rest · 1–3 rounds' : 'Recovery'}</div>
+          ${p.note ? `<div class="muted small">${p.note}</div>` : ''}
+          <div class="muted small">${p.type === 'lift' ? p.items.map((i) => Array.isArray(i[0]) ? i[0].map((x) => EXERCISES[x].name).join(' / ') : EXERCISES[i[0]].name).join(' · ')  : ''}</div>
         </button>`; }).join('')}`;
   }
   const header = `<section class="card">
       <div class="row between"><div><div class="muted small">IN PROGRESS</div><div class="h2">${PLAN[d.day].emoji} ${esc(d.title)}</div></div>
       <button class="btn ghost small" data-act="cancel-draft">Discard</button></div>
+      ${PLAN[d.day].note && PLAN[d.day].title === d.title ? `<div class="hint">${PLAN[d.day].note}</div>` : ''}
       <label class="field inline">Date <input type="date" data-bind="date" value="${d.date}" max="${todayStr()}"></label>
     </section>`;
   if (d.type === 'lift') {
@@ -533,7 +540,7 @@ function sparkline(id) {
   const pts = [];
   for (const s of sessionsSorted()) {
     const e = (s.exercises || []).find((x) => x.id === id);
-    if (e) pts.push(Math.max(...e.sets.map((st) => e1rm(st.w, st.r))));
+    if (e) pts.push(Math.max(...e.sets.map((st) => e1rm(loadOf(EXERCISES[id], st.w), st.r))));
   }
   if (pts.length < 2) return '';
   const W = 240, H = 36, mn = Math.min(...pts), mx = Math.max(...pts), rng = mx - mn || 1;
